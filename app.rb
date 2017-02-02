@@ -1,4 +1,5 @@
-# Run by running "ruby app.rb"
+# First run "bundle install" (remember to "gem install bundler" before).
+# Then run by running "ruby app.rb"
 
 require 'sinatra'
 require 'fileutils'
