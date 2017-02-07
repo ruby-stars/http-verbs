@@ -4,20 +4,20 @@
 require 'sinatra'
 require 'fileutils'
 
-filename = File.new("hello.txt", File::CREAT) # Create the file when the app starts.
+FILENAME = "hello.txt"
 
 # Show contents of our file.
 get '/hello' do
-  file = File.open(filename, "w+") # Open for read
-  file.read
+  # a w r
+  file = File.open(FILENAME, "r") # Open for read
+  value = file.read
   file.close
-
-  return 200
+  value
 end
 
 # Add more content
 post '/hello' do
-  file = File.open(filename, "w+") # Open for write. Rewrites the content of the file.
+  file = File.open(FILENAME, "w+") # Open for write. Rewrites the content of the file.
   file.write(params["name"])
   file.close
 
@@ -26,16 +26,32 @@ end
 
 # Edit the content
 put '/hello' do
-  file = File.open(filename, "a+") # Open for append. Adds content to the file.
-  file.write(params["name"] + "\n")
+  # old_name => new_name
+  old_name = params['old_name']
+  new_name = params['new_name']
+
+  file = File.open(FILENAME, "r") # Open for append. Adds content to the file.
+  contents = file.read
+  new_contents = contents.gsub(old_name, new_name)
   file.close
 
+  file = File.open(FILENAME, "w")
+  file.write(new_contents)
+  file.close
   return 200
 end
 
 # Delete file
 delete '/hello' do
-  FileUtils.rm("hello.txt") # Deletes the file.
+  old_name = params['name']
+  file = File.open(FILENAME, "r") # Open for append. Adds content to the file.
+  contents = file.read
+  new_contents = contents.gsub(old_name, '')
+  file.close
+
+  file = File.open(FILENAME, "w")
+  file.write(new_contents)
+  file.close
 
   return 200
 end
